@@ -73,7 +73,20 @@ escapeChars = do
                          'n'  -> '\n'
                          'r'  -> '\r'
                          't'  -> '\t'
-                         _    -> escape                         
+                         _    -> escape
+
+parseCharacter :: Parser LispVal
+parseCharacter = do
+                   string "#\\"
+                   char <- specialChar <|> anyChar
+                   return $ Character char
+
+specialChar :: Parser Char
+specialChar = do
+                s <- string "space" <|> string "newline"
+                return $ case s of
+                         "space" -> ' '
+                         "newline" -> '\n'
 
 symbol :: Parser Char
 symbol = oneOf "!#$%&*+-/:<=>?@^_~"
@@ -82,9 +95,10 @@ spaces :: Parser ()
 spaces = skipMany1 space
 
 parseExpr :: Parser LispVal
-parseExpr = parseNumber <|>
-            parseAtom <|>
-            parseString
+parseExpr = try parseCharacter <|>
+            try parseNumber <|>
+            try parseString <|>
+            parseAtom
             
 readExpr :: String -> String
 readExpr input = case parse parseExpr "lisp" input of
