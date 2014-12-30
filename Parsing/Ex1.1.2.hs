@@ -21,7 +21,8 @@ parseAtom = do
                           _    -> Atom atom
 
 parseNumber :: Parser LispVal
-parseNumber = (many1 digit) >>= (\numC -> return $ Number $ read numC)
+parseNumber = (many1 digit)
+            >>= (\numC -> return $ Number $ read numC)
                 
 parseString :: Parser LispVal
 parseString = do

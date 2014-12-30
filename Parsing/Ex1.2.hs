@@ -26,7 +26,7 @@ parseNumber = liftM (Number . read) $ many1 digit
 parseString :: Parser LispVal
 parseString = do
                 char '"'
-                x <- many (doubleQuote <|> noneOf "\\\"")
+                x <- many (doubleQuote <|> noneOf ['\\', '"'])
                 char '"'
                 return $ String x
 
@@ -37,7 +37,7 @@ parseExpr = parseAtom <|>
 
 doubleQuote :: Parser Char
 doubleQuote = do
-                string "\\\""
+                string ['\\', '"']
                 return $ '"'
 
 symbol :: Parser Char
